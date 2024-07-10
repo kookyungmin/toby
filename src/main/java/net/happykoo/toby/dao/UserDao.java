@@ -7,10 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UserDao {
-    private MysqlConnectionMaker connectionMaker;
+    private ConnectionMaker connectionMaker;
 
-    public UserDao() {
-        this.connectionMaker = new MysqlConnectionMaker();
+    public UserDao(ConnectionMaker connectionMaker) {
+        this.connectionMaker = connectionMaker;
     }
 
     // ID 로 User 조회

@@ -1,5 +1,7 @@
 package net.happykoo.toby;
 
+import net.happykoo.toby.dao.DaoFactory;
+import net.happykoo.toby.dao.MysqlConnectionMaker;
 import net.happykoo.toby.dao.UserDao;
 import net.happykoo.toby.dto.User;
 
@@ -8,7 +10,7 @@ import java.util.Optional;
 public class UserDaoTest {
     public static void main(String[] args) {
         try {
-            UserDao userDao = new UserDao();
+            UserDao userDao = new DaoFactory().userDao();
 
             // id 가 1인 유저 조회
             User user = userDao.findById(1);
