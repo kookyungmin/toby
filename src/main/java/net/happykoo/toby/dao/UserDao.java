@@ -7,10 +7,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UserDao {
-    public User findById(int id) throws ClassNotFoundException, SQLException {
-        Class.forName("com.mysql.jdbc.Driver");
+    private MysqlConnectionMaker connectionMaker;
 
-        try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/happykoo", "root", "");
+    public UserDao() {
+        this.connectionMaker = new MysqlConnectionMaker();
+    }
+
+    // ID 로 User 조회
+    public User findById(int id) throws ClassNotFoundException, SQLException {
+        try (Connection conn = this.connectionMaker.getConnection();
              PreparedStatement ps = conn.prepareStatement("select id, nickname from User where id = ?")) {
 
             ps.setInt(1, id);
@@ -27,9 +32,9 @@ public class UserDao {
         }
     }
 
+    // 전체 User 조회
     public List<User> findAll() throws ClassNotFoundException, SQLException {
-        Class.forName("com.mysql.jdbc.Driver");
-        try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/happykoo", "root", "");
+        try (Connection conn = this.connectionMaker.getConnection();
              PreparedStatement ps = conn.prepareStatement("select id, nickname from User")) {
 
             List<User> userList = new ArrayList<>();

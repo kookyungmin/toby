@@ -5,20 +5,20 @@ import net.happykoo.toby.dto.User;
 
 import java.util.Optional;
 
-public class Main {
+public class UserDaoTest {
     public static void main(String[] args) {
         try {
             UserDao userDao = new UserDao();
-            User user = userDao.findById(1);
 
+            // id 가 1인 유저 조회
+            User user = userDao.findById(1);
             String nickName = Optional.ofNullable(user)
                     .map(User::getNickName)
                     .orElse(null);
-
             System.out.println("user nickName >> " + nickName);
 
+            // 전체 유저 조회
             int totalCount = userDao.findAll().size();
-
             System.out.println("user all count >> " + totalCount);
         } catch (Exception e) {
             e.printStackTrace();
