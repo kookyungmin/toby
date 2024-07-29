@@ -13,41 +13,46 @@ public class UserDao {
         this.connectionMaker = connectionMaker;
     }
 
-    // ID 로 User 조회
-    public User findById(int id) throws ClassNotFoundException, SQLException {
+    //User 삽입
+    public void add(User user) throws ClassNotFoundException, SQLException {
         try (Connection conn = this.connectionMaker.getConnection();
-             PreparedStatement ps = conn.prepareStatement("select id, nickname from User where id = ?")) {
+             PreparedStatement ps = conn.prepareStatement("insert into User(id, nick_name) values(?, ?)")) {
 
-            ps.setInt(1, id);
+            ps.setString(1, user.getId());
+            ps.setString(2, user.getNickName());
+
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw e;
+        }
+    }
+
+    // ID 로 User 조회
+    public User findById(String id) throws ClassNotFoundException, SQLException {
+        try (Connection conn = this.connectionMaker.getConnection();
+             PreparedStatement ps = conn.prepareStatement("select id, nick_name from User where id = ?")) {
+
+            ps.setString(1, id);
             ResultSet rs = ps.executeQuery();
 
             if (!rs.next()) return null;
 
             return User.builder()
-                    .id(rs.getInt("id"))
-                    .nickName(rs.getString("nickname"))
+                    .id(rs.getString("id"))
+                    .nickName(rs.getString("nick_name"))
                     .build();
         } catch (SQLException e) {
             throw e;
         }
     }
 
-    // 전체 User 조회
-    public List<User> findAll() throws ClassNotFoundException, SQLException {
+    // ID 로 유저 삭제
+    public void deleteById(String id) throws ClassNotFoundException, SQLException {
         try (Connection conn = this.connectionMaker.getConnection();
-             PreparedStatement ps = conn.prepareStatement("select id, nickname from User")) {
+             PreparedStatement ps = conn.prepareStatement("delete from User where id = ?")) {
 
-            List<User> userList = new ArrayList<>();
-            ResultSet rs = ps.executeQuery();
-
-            while (rs.next()) {
-                userList.add(User.builder()
-                        .id(rs.getInt("id"))
-                        .nickName(rs.getString("nickname"))
-                        .build());
-            }
-
-            return userList;
+            ps.setString(1, id);
+            ps.executeUpdate();
         } catch (SQLException e) {
             throw e;
         }

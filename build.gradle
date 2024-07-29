@@ -10,10 +10,13 @@ repositories {
 }
 
 dependencies {
+    implementation 'org.junit.platform:junit-platform-launcher:1.8.1'
+    implementation 'org.junit.jupiter:junit-jupiter:5.8.1'
     compileOnly 'org.projectlombok:lombok:1.18.34'
     annotationProcessor 'org.projectlombok:lombok:1.18.34'
     implementation 'mysql:mysql-connector-java:5.1.6'
     implementation 'org.springframework.boot:spring-boot-starter-web:2.5.7'
+    implementation 'org.springframework.boot:spring-boot-starter-jdbc:2.5.7'
 
     testCompileOnly 'org.projectlombok:lombok:1.18.34'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.34'

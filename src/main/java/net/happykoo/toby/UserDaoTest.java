@@ -1,47 +1,54 @@
 package net.happykoo.toby;
 
 import net.happykoo.toby.dao.DaoFactory;
-import net.happykoo.toby.dao.MysqlConnectionMaker;
 import net.happykoo.toby.dao.UserDao;
 import net.happykoo.toby.dto.User;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.dao.EmptyResultDataAccessException;
 
+import java.sql.SQLException;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass;
+
 public class UserDaoTest {
-    public static void main(String[] args) {
-        try {
-            //객체 직접 생성
-            DaoFactory daoFactory = new DaoFactory();
-            UserDao userDao1 = daoFactory.userDao();
-            UserDao userDao2 = daoFactory.userDao();
+    @Test
+    @DisplayName("findById() 메서드 테스트 :: 해당 유저가 없을 때, EmptyResultDataAccessException 발생")
+    public void findByIdExceptionTest() throws SQLException, ClassNotFoundException {
+        ApplicationContext context = new AnnotationConfigApplicationContext(DaoFactory.class);
+        UserDao userDao = context.getBean("userDao", UserDao.class);
 
-            System.out.println(userDao1.equals(userDao2));
+        assertThrows(EmptyResultDataAccessException.class, () -> userDao.findById("UNKNOWN_ID"));
+    }
 
-            //ApplicationContext 사용
-            ApplicationContext context = new AnnotationConfigApplicationContext(DaoFactory.class);
-            UserDao userDao3 = context.getBean("userDao", UserDao.class);
-            UserDao userDao4 = context.getBean("userDao", UserDao.class);
+    @Test
+    public void addAndFindByIdAndDeleteByIdTest() throws SQLException, ClassNotFoundException {
+        ApplicationContext context = new AnnotationConfigApplicationContext(DaoFactory.class);
+        UserDao userDao = context.getBean("userDao", UserDao.class);
 
-            System.out.println(userDao3.equals(userDao4));
+        User newUser = User.builder()
+                .id("happykoo")
+                .nickName("해피쿠")
+                .build();
 
+        userDao.add(newUser);
+        User user = userDao.findById(newUser.getId());
 
+        //해피쿠 유저 데이터가 제대로 삽입/조회 되었는지 테스트
+        String expectedNickName = newUser.getNickName();
+        String actualNickName = Optional.ofNullable(user)
+                .map(User::getNickName)
+                .orElse(null);
 
+        assertEquals(expectedNickName, actualNickName);
 
+        userDao.deleteById(newUser.getId());
 
-//            // id 가 1인 유저 조회
-//            User user = userDao.findById(1);
-//            String nickName = Optional.ofNullable(user)
-//                    .map(User::getNickName)
-//                    .orElse(null);
-//            System.out.println("user nickName >> " + nickName);
-//
-//            // 전체 유저 조회
-//            int totalCount = userDao.findAll().size();
-//            System.out.println("user all count >> " + totalCount);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        //해피쿠 유저 데이터가 제대로 삭제되었는지 테스트
+        assertNull(userDao.findById(newUser.getId()));
     }
 }

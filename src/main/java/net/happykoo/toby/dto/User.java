@@ -8,6 +8,6 @@ import lombok.Setter;
 @Setter
 @Builder
 public class User {
-    private int id;
+    private String id;
     private String nickName;
 }
