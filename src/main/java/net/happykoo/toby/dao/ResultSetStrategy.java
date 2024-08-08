@@ -4,6 +4,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 @FunctionalInterface
-public interface ResultSetStrategy {
-    Object extractResultSet(ResultSet rs) throws SQLException;
+public interface ResultSetStrategy<T> {
+    T extractResultSet(ResultSet rs) throws SQLException;
 }
