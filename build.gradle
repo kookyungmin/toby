@@ -1,5 +1,7 @@
 plugins {
     id 'java'
+    id 'org.springframework.boot' version '2.5.7'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 }
 
 group 'net.happykoo'
@@ -12,6 +14,7 @@ repositories {
 dependencies {
     implementation 'org.junit.platform:junit-platform-launcher:1.8.1'
     implementation 'org.junit.jupiter:junit-jupiter:5.8.1'
+    implementation 'org.springframework.boot:spring-boot-starter-test'
     compileOnly 'org.projectlombok:lombok:1.18.34'
     annotationProcessor 'org.projectlombok:lombok:1.18.34'
     implementation 'mysql:mysql-connector-java:5.1.6'
