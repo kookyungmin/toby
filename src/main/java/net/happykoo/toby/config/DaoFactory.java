@@ -1,5 +1,7 @@
-package net.happykoo.toby.dao;
+package net.happykoo.toby.config;
 
+import net.happykoo.toby.dao.UserDao;
+import net.happykoo.toby.dao.UserDaoJdbc;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,7 +26,7 @@ public class DaoFactory {
 
     @Bean
     public UserDao userDao() {
-        return new UserDao(dataSource());
+        return new UserDaoJdbc(dataSource());
     }
 
     @Bean
@@ -36,10 +38,11 @@ public class DaoFactory {
             dataSource.setUrl(jdbcUrl);
             dataSource.setUsername(userName);
             dataSource.setPassword(password);
+
             return dataSource;
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
-            return null;
+            throw new RuntimeException(e);
         }
     }
 }

@@ -1,8 +1,5 @@
 package net.happykoo.toby.dao;
 
-import net.happykoo.toby.dto.User;
-import org.springframework.dao.EmptyResultDataAccessException;
-
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
