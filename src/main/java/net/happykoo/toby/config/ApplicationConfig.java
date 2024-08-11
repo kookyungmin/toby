@@ -2,6 +2,7 @@ package net.happykoo.toby.config;
 
 import net.happykoo.toby.dao.UserDao;
 import net.happykoo.toby.dao.UserDaoJdbc;
+import net.happykoo.toby.service.UserService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,7 +12,7 @@ import javax.sql.DataSource;
 import java.sql.Driver;
 
 @Configuration
-public class DaoFactory {
+public class ApplicationConfig {
     @Value("${spring.datasource.driver-class-name}")
     private String driverClassName;
 
@@ -23,6 +24,11 @@ public class DaoFactory {
 
     @Value("${spring.datasource.password}")
     private String password;
+
+    @Bean
+    public UserService userService() {
+        return new UserService(userDao());
+    }
 
     @Bean
     public UserDao userDao() {

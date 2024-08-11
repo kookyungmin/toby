@@ -16,6 +16,14 @@ public enum Level {
         return value;
     }
 
+    public Level getNextLevel() {
+        switch (this) {
+            case BRONZE: return SILVER;
+            case SILVER: return GOLD;
+            default: return null;
+        }
+    }
+
     public static Level valueOf(int value) {
        return Arrays.asList(Level.values())
                .stream()

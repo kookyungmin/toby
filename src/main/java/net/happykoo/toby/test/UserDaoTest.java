@@ -1,6 +1,7 @@
 package net.happykoo.toby.test;
 
-import net.happykoo.toby.config.DaoFactory;
+import net.happykoo.toby.config.ApplicationConfig;
+import net.happykoo.toby.constant.Level;
 import net.happykoo.toby.dao.UserDao;
 import net.happykoo.toby.dto.User;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,19 +13,59 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 
-import java.util.Optional;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@SpringBootTest(classes = DaoFactory.class)
+@SpringBootTest(classes = ApplicationConfig.class)
 public class UserDaoTest {
     @Autowired
     private UserDao userDao;
 
+    private List<User> testUsers;
+
     @BeforeEach
     public void setUp() {
-        System.out.println("UserDao >> " + userDao);
+        testUsers = List.of(
+            new User("happykoo", "해피쿠", Level.BRONZE, 49, 0),
+            new User("marco", "마르코", Level.BRONZE, 50, 0),
+            new User("bean", "콩", Level.SILVER, 60, 29)
+        );
+        userDao.deleteAll();
+    }
+
+    @Test
+    @DisplayName("findAll(), deleteAll() 메서드 테스트 :: 정상적인 경우")
+    public void findAllAndDeleteAllTest() {
+        //처음 전체 유저 수 0건
+        assertEquals(0, userDao.findAll().size());
+
+        for(User testUser : testUsers) {
+            userDao.add(testUser);
+        }
+
+        //전체 유저 수 testUsers.size() 건
+        assertEquals(testUsers.size(), userDao.findAll().size());
+
+        //전체 삭제 후 전체 유저 수 0건
+        userDao.deleteAll();
+        assertEquals(0, userDao.findAll().size());
+    }
+
+    @Test
+    @DisplayName("update() 메서드 테스트 :: 레벨 수정")
+    public void updateTest() {
+        User testUser = testUsers.get(0);
+
+        userDao.add(testUser);
+        assertEquals(Level.BRONZE, userDao.findById(testUser.getId()).getLevel());
+
+        //레벨 변경
+        testUser.setLevel(Level.GOLD);
+        userDao.update(testUser);
+
+        assertEquals(Level.GOLD, userDao.findById(testUser.getId()).getLevel());
     }
 
     @Test
@@ -36,44 +77,38 @@ public class UserDaoTest {
     @Test
     @DisplayName("add(), findById(), deleteById() 메서드 테스트 :: 정상적인 경우")
     public void addAndFindByIdAndDeleteByIdTest() {
-        User newUser = User.builder()
-                .id("happykoo")
-                .nickName("해피쿠")
-                .build();
+        User testUser = testUsers.get(0);
 
-        userDao.add(newUser);
-        User user = userDao.findById(newUser.getId());
+        userDao.add(testUser);
+        User user = userDao.findById(testUser.getId());
 
         //해피쿠 유저 데이터가 제대로 삽입/조회 되었는지 테스트
-        String expectedNickName = newUser.getNickName();
-        String actualNickName = Optional.ofNullable(user)
-                .map(User::getNickName)
-                .orElse(null);
+        assertUserEquals(testUser, user);
 
-        assertEquals(expectedNickName, actualNickName);
-
-        userDao.deleteById(newUser.getId());
+        userDao.deleteById(testUser.getId());
 
         //해피쿠 유저 데이터가 제대로 삭제되었는지 테스트
-        assertThrows(EmptyResultDataAccessException.class, () -> userDao.findById(newUser.getId()));
+        assertThrows(EmptyResultDataAccessException.class, () -> userDao.findById(testUser.getId()));
     }
 
     @Test
     @DisplayName("add() 메서드 테스트 :: ID가 중복된 경우")
     public void addExceptionTest() {
-        User newUser = User.builder()
-                .id("happykoo")
-                .nickName("해피쿠")
-                .build();
+        User testUser = testUsers.get(0);
 
-        userDao.add(newUser);
+        userDao.add(testUser);
         //중복된 ID로 삽입시 DataAccessException 발생
-        assertThrows(DataAccessException.class, () -> userDao.add(newUser));
+        assertThrows(DataAccessException.class, () -> userDao.add(testUser));
 
         //중복된 ID로 삽입시 DataAccessException 하위 클래스 DuplicateKeyException 발생
-        assertThrows(DuplicateKeyException.class, () -> userDao.add(newUser));
+        assertThrows(DuplicateKeyException.class, () -> userDao.add(testUser));
+    }
 
-        userDao.deleteById(newUser.getId());
-        assertThrows(EmptyResultDataAccessException.class, () -> userDao.findById(newUser.getId()));
+    private void assertUserEquals(User source, User target) {
+        assertEquals(source.getId(), target.getId());
+        assertEquals(source.getNickName(), target.getNickName());
+        assertEquals(source.getLevel(), target.getLevel());
+        assertEquals(source.getLoginCount(), target.getLoginCount());
+        assertEquals(source.getRecommendCount(), target.getRecommendCount());
     }
 }
