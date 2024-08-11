@@ -11,9 +11,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.dao.DataAccessResourceFailureException;
+import org.springframework.transaction.PlatformTransactionManager;
 
-import javax.sql.DataSource;
 import java.util.List;
 
 import static net.happykoo.toby.constant.Level.BRONZE;
@@ -30,7 +29,7 @@ public class UserServiceTest {
     private UserDao userDao;
 
     @Autowired
-    private DataSource dataSource;
+    private PlatformTransactionManager transactionManager;
 
     private List<User> testUsers;
 
@@ -63,7 +62,7 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("upgradeLevels 메서드 테스트 :: 정상적인 경우")
-    public void upgradeLevelsTest() throws Exception {
+    public void upgradeLevelsTest() {
         for(User testUser : testUsers) {
             userDao.add(testUser);
         }
@@ -79,7 +78,7 @@ public class UserServiceTest {
     @Test
     @DisplayName("upgradeLevels 메서드 테스트 :: 예외가 발생한 경우 롤백")
     public void upgradeLevelsRollbackTest() {
-        TestUserService testUserService = new TestUserService(userDao, dataSource);
+        TestUserService testUserService = new TestUserService(userDao, transactionManager);
         //네번째 유저 레벨 update 시 예외 발생
         testUserService.setErrorUserId(testUsers.get(3).getId());
 
@@ -89,7 +88,7 @@ public class UserServiceTest {
 
         try {
             testUserService.upgradeLevels();
-        } catch (Exception e) {}
+        } catch (RuntimeException e) {}
 
         checkUpgradeLevel(testUsers.get(0), false);
         checkUpgradeLevel(testUsers.get(1), false);

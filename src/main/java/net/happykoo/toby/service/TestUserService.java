@@ -5,6 +5,7 @@ import lombok.Setter;
 import net.happykoo.toby.dao.UserDao;
 import net.happykoo.toby.dto.User;
 import org.springframework.dao.DataAccessResourceFailureException;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
 
@@ -13,8 +14,8 @@ import javax.sql.DataSource;
 public class TestUserService extends UserService {
     private String errorUserId;
     public TestUserService(UserDao userDao,
-                           DataSource dataSource) {
-        super(userDao, dataSource);
+                           PlatformTransactionManager transactionManager) {
+        super(userDao, transactionManager);
     }
 
     @Override
