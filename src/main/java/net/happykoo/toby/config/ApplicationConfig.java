@@ -3,6 +3,8 @@ package net.happykoo.toby.config;
 import net.happykoo.toby.dao.UserDao;
 import net.happykoo.toby.dao.UserDaoJdbc;
 import net.happykoo.toby.service.UserService;
+import net.happykoo.toby.service.UserServiceImpl;
+import net.happykoo.toby.service.UserServiceTx;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,7 +31,7 @@ public class ApplicationConfig {
 
     @Bean
     public UserService userService() {
-        return new UserService(userDao(), transactionManager());
+        return new UserServiceTx(new UserServiceImpl(userDao()), transactionManager());
     }
 
     @Bean

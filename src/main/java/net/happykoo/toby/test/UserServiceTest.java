@@ -4,8 +4,9 @@ import net.happykoo.toby.config.ApplicationConfig;
 import net.happykoo.toby.constant.Level;
 import net.happykoo.toby.dao.UserDao;
 import net.happykoo.toby.dto.User;
-import net.happykoo.toby.service.TestUserService;
+import net.happykoo.toby.service.TestUserServiceImpl;
 import net.happykoo.toby.service.UserService;
+import net.happykoo.toby.service.UserServiceTx;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,8 +17,8 @@ import org.springframework.transaction.PlatformTransactionManager;
 import java.util.List;
 
 import static net.happykoo.toby.constant.Level.BRONZE;
-import static net.happykoo.toby.service.UserService.MIN_LOGIN_COUNT_FOR_SILVER;
-import static net.happykoo.toby.service.UserService.MIN_RECOMMEND_FOR_GOLD;
+import static net.happykoo.toby.service.UserServiceImpl.MIN_LOGIN_COUNT_FOR_SILVER;
+import static net.happykoo.toby.service.UserServiceImpl.MIN_RECOMMEND_FOR_GOLD;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest(classes = ApplicationConfig.class)
@@ -78,9 +79,11 @@ public class UserServiceTest {
     @Test
     @DisplayName("upgradeLevels 메서드 테스트 :: 예외가 발생한 경우 롤백")
     public void upgradeLevelsRollbackTest() {
-        TestUserService testUserService = new TestUserService(userDao, transactionManager);
+        TestUserServiceImpl testUserServiceImpl = new TestUserServiceImpl(userDao);
         //네번째 유저 레벨 update 시 예외 발생
-        testUserService.setErrorUserId(testUsers.get(3).getId());
+        testUserServiceImpl.setErrorUserId(testUsers.get(3).getId());
+
+        UserService testUserService = new UserServiceTx(testUserServiceImpl, transactionManager);
 
         for(User testUser : testUsers) {
             userDao.add(testUser);
