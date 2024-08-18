@@ -21,6 +21,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web:2.5.7'
     implementation 'org.springframework.boot:spring-boot-starter-jdbc:2.5.7'
     implementation 'com.oracle.database.jdbc:ojdbc8:18.15.0.0'
+    implementation 'org.mockito:mockito-core:2.1.0'
 
     testCompileOnly 'org.projectlombok:lombok:1.18.34'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.34'

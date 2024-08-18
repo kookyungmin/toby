@@ -22,7 +22,7 @@ import static net.happykoo.toby.service.UserServiceImpl.MIN_RECOMMEND_FOR_GOLD;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest(classes = ApplicationConfig.class)
-public class UserServiceTest {
+public class UserServiceBootTest {
     @Autowired
     private UserService userService;
 
