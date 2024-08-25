@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import java.lang.reflect.Proxy;
@@ -84,6 +85,7 @@ public class UserServiceBootTest {
 
     @Test
     @DisplayName("upgradeLevels 메서드 테스트 :: 예외가 발생한 경우 롤백")
+    @DirtiesContext
     public void upgradeLevelsRollbackTest() {
         TestUserServiceImpl testUserServiceImpl = new TestUserServiceImpl(userDao);
         //네번째 유저 레벨 update 시 예외 발생
