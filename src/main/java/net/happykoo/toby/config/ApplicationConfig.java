@@ -2,10 +2,14 @@ package net.happykoo.toby.config;
 
 import net.happykoo.toby.dao.UserDao;
 import net.happykoo.toby.dao.UserDaoJdbc;
+import net.happykoo.toby.factory.TxProxyFactoryBean;
+import net.happykoo.toby.handler.TxInvocationHandler;
 import net.happykoo.toby.service.UserService;
 import net.happykoo.toby.service.UserServiceImpl;
-import net.happykoo.toby.service.UserServiceTx;
+import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -13,6 +17,7 @@ import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
+import java.lang.reflect.Proxy;
 import java.sql.Driver;
 
 @Configuration
@@ -30,9 +35,14 @@ public class ApplicationConfig {
     private String password;
 
     @Bean
-    public UserService userService() {
-        return new UserServiceTx(new UserServiceImpl(userDao()), transactionManager());
+    public TxProxyFactoryBean userService() {
+        return new TxProxyFactoryBean(transactionManager(), new UserServiceImpl(userDao()), "upgradeLevels", UserService.class);
     }
+
+//    @Bean
+//    public UserService userService() {
+//        return (UserService) userTxProxyFactoryBean().getObject();
+//    }
 
     @Bean
     public UserDao userDao() {
