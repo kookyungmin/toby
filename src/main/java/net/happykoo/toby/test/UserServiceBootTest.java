@@ -11,6 +11,7 @@ import net.happykoo.toby.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.aop.framework.ProxyFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
@@ -91,9 +92,9 @@ public class UserServiceBootTest {
         //네번째 유저 레벨 update 시 예외 발생
         testUserServiceImpl.setErrorUserId(testUsers.get(3).getId());
 
-        TxProxyFactoryBean txProxyFactoryBean = applicationContext.getBean("&userService", TxProxyFactoryBean.class);
-        txProxyFactoryBean.setTarget(testUserServiceImpl);
-        UserService testUserService = (UserService) txProxyFactoryBean.getObject();
+        ProxyFactoryBean proxyFactoryBean = applicationContext.getBean("&userService", ProxyFactoryBean.class);
+        proxyFactoryBean.setTarget(testUserServiceImpl);
+        UserService testUserService = (UserService) proxyFactoryBean.getObject();
 
         for(User testUser : testUsers) {
             userDao.add(testUser);
