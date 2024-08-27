@@ -1,4 +1,4 @@
-package net.happykoo.toby.handler;
+package net.happykoo.toby.advisor;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;

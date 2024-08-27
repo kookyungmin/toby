@@ -9,14 +9,13 @@ import org.springframework.dao.DataAccessResourceFailureException;
 @Setter
 @Getter
 public class TestUserServiceImpl extends UserServiceImpl {
-    private String errorUserId;
     public TestUserServiceImpl(UserDao userDao) {
         super(userDao);
     }
 
     @Override
     public void upgradeLevel(User user) {
-        if (user.getId().equals(errorUserId)) {
+        if (user.getId().equals("test4")) {
             throw new DataAccessResourceFailureException("Network error");
         }
         super.upgradeLevel(user);

@@ -1,27 +1,23 @@
 package net.happykoo.toby.config;
 
+import net.happykoo.toby.advisor.NameMatchClassMethodPointcut;
+import net.happykoo.toby.advisor.TxAdvice;
 import net.happykoo.toby.dao.UserDao;
 import net.happykoo.toby.dao.UserDaoJdbc;
-import net.happykoo.toby.factory.TxProxyFactoryBean;
-import net.happykoo.toby.handler.TxAdvice;
-import net.happykoo.toby.handler.TxInvocationHandler;
+import net.happykoo.toby.service.TestUserServiceImpl;
 import net.happykoo.toby.service.UserService;
 import net.happykoo.toby.service.UserServiceImpl;
-import org.springframework.aop.framework.ProxyFactoryBean;
+import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.aop.support.DefaultPointcutAdvisor;
-import org.springframework.aop.support.NameMatchMethodPointcut;
-import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
-import java.lang.reflect.Proxy;
 import java.sql.Driver;
 
 @Configuration
@@ -39,8 +35,15 @@ public class ApplicationConfig {
     private String password;
 
     @Bean
-    public NameMatchMethodPointcut transactionPointcut() {
-        NameMatchMethodPointcut pointcut = new NameMatchMethodPointcut();
+    public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
+        return new PropertySourcesPlaceholderConfigurer();
+    }
+
+    @Bean
+    public NameMatchClassMethodPointcut transactionPointcut() {
+        NameMatchClassMethodPointcut pointcut = new NameMatchClassMethodPointcut();
+
+        pointcut.setMappedClassName("*ServiceImpl");
         pointcut.setMappedName("upgrade*");
 
         return pointcut;
@@ -61,13 +64,18 @@ public class ApplicationConfig {
     }
 
     @Bean
-    public ProxyFactoryBean userService() {
-        ProxyFactoryBean factoryBean = new ProxyFactoryBean();
+    public DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator() {
+        return new DefaultAdvisorAutoProxyCreator();
+    }
 
-        factoryBean.setTarget(new UserServiceImpl(userDao()));
-        factoryBean.setInterceptorNames("transactionAdvisor");
+    @Bean
+    public UserService userService() {
+        return new UserServiceImpl(userDao());
+    }
 
-        return factoryBean;
+    @Bean
+    public UserService testUserService() {
+        return new TestUserServiceImpl(userDao());
     }
 
 

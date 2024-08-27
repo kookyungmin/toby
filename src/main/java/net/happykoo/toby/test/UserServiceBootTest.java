@@ -1,11 +1,10 @@
 package net.happykoo.toby.test;
 
+import lombok.extern.slf4j.Slf4j;
 import net.happykoo.toby.config.ApplicationConfig;
 import net.happykoo.toby.constant.Level;
 import net.happykoo.toby.dao.UserDao;
 import net.happykoo.toby.dto.User;
-import net.happykoo.toby.factory.TxProxyFactoryBean;
-import net.happykoo.toby.handler.TxInvocationHandler;
 import net.happykoo.toby.service.TestUserServiceImpl;
 import net.happykoo.toby.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,7 +17,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import java.lang.reflect.Proxy;
 import java.util.List;
 
 import static net.happykoo.toby.constant.Level.BRONZE;
@@ -27,18 +25,16 @@ import static net.happykoo.toby.service.UserServiceImpl.MIN_RECOMMEND_FOR_GOLD;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest(classes = ApplicationConfig.class)
+@Slf4j
 public class UserServiceBootTest {
     @Autowired
-    private ApplicationContext applicationContext;
-
-    @Autowired
     private UserService userService;
+    @Autowired
+    private UserService testUserService;
 
     @Autowired
     private UserDao userDao;
 
-    @Autowired
-    private PlatformTransactionManager transactionManager;
 
     private List<User> testUsers;
 
@@ -88,14 +84,6 @@ public class UserServiceBootTest {
     @DisplayName("upgradeLevels 메서드 테스트 :: 예외가 발생한 경우 롤백")
     @DirtiesContext
     public void upgradeLevelsRollbackTest() {
-        TestUserServiceImpl testUserServiceImpl = new TestUserServiceImpl(userDao);
-        //네번째 유저 레벨 update 시 예외 발생
-        testUserServiceImpl.setErrorUserId(testUsers.get(3).getId());
-
-        ProxyFactoryBean proxyFactoryBean = applicationContext.getBean("&userService", ProxyFactoryBean.class);
-        proxyFactoryBean.setTarget(testUserServiceImpl);
-        UserService testUserService = (UserService) proxyFactoryBean.getObject();
-
         for(User testUser : testUsers) {
             userDao.add(testUser);
         }
