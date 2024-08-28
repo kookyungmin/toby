@@ -1,12 +1,12 @@
 package net.happykoo.toby.config;
 
-import net.happykoo.toby.advisor.NameMatchClassMethodPointcut;
 import net.happykoo.toby.advisor.TxAdvice;
 import net.happykoo.toby.dao.UserDao;
 import net.happykoo.toby.dao.UserDaoJdbc;
-import net.happykoo.toby.service.TestUserServiceImpl;
+import net.happykoo.toby.service.TestUserService;
 import net.happykoo.toby.service.UserService;
 import net.happykoo.toby.service.UserServiceImpl;
+import org.springframework.aop.aspectj.AspectJExpressionPointcut;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.aop.support.DefaultPointcutAdvisor;
 import org.springframework.beans.factory.annotation.Value;
@@ -40,11 +40,10 @@ public class ApplicationConfig {
     }
 
     @Bean
-    public NameMatchClassMethodPointcut transactionPointcut() {
-        NameMatchClassMethodPointcut pointcut = new NameMatchClassMethodPointcut();
+    public AspectJExpressionPointcut transactionPointcut() {
+        AspectJExpressionPointcut pointcut = new AspectJExpressionPointcut();
 
-        pointcut.setMappedClassName("*ServiceImpl");
-        pointcut.setMappedName("upgrade*");
+        pointcut.setExpression("execution(* *..*ServiceImpl.upgrade*(..))");
 
         return pointcut;
     }
@@ -75,7 +74,7 @@ public class ApplicationConfig {
 
     @Bean
     public UserService testUserService() {
-        return new TestUserServiceImpl(userDao());
+        return new TestUserService(userDao());
     }
 
 

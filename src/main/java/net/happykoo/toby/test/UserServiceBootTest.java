@@ -5,17 +5,13 @@ import net.happykoo.toby.config.ApplicationConfig;
 import net.happykoo.toby.constant.Level;
 import net.happykoo.toby.dao.UserDao;
 import net.happykoo.toby.dto.User;
-import net.happykoo.toby.service.TestUserServiceImpl;
 import net.happykoo.toby.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.aop.framework.ProxyFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.ApplicationContext;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.transaction.PlatformTransactionManager;
 
 import java.util.List;
 
@@ -34,7 +30,6 @@ public class UserServiceBootTest {
 
     @Autowired
     private UserDao userDao;
-
 
     private List<User> testUsers;
 

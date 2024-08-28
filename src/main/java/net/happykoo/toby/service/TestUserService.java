@@ -8,8 +8,8 @@ import org.springframework.dao.DataAccessResourceFailureException;
 
 @Setter
 @Getter
-public class TestUserServiceImpl extends UserServiceImpl {
-    public TestUserServiceImpl(UserDao userDao) {
+public class TestUserService extends UserServiceImpl {
+    public TestUserService(UserDao userDao) {
         super(userDao);
     }
 
