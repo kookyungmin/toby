@@ -21,3 +21,4 @@ public class TestUserService extends UserServiceImpl {
         super.upgradeLevel(user);
     }
 }
+
