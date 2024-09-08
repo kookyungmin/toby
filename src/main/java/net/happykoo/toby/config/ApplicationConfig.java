@@ -14,7 +14,7 @@ import javax.sql.DataSource;
 
 @Configuration
 @Import({ DataSourceConfig.class, AopConfig.class })
-@EnableAspectJAutoProxy
+//@EnableAspectJAutoProxy
 public class ApplicationConfig {
     @Bean
     public UserService userService(UserDao userDao) {
