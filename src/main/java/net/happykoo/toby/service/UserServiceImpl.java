@@ -5,6 +5,7 @@ import net.happykoo.toby.dao.UserDao;
 import net.happykoo.toby.dto.User;
 
 import java.util.List;
+import java.util.Objects;
 
 public class UserServiceImpl implements UserService {
     public static final int MIN_LOGIN_COUNT_FOR_SILVER = 50;
@@ -18,7 +19,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void add(User user) {
-        user.setLevel(Level.BRONZE);
+        if (Objects.isNull(user.getLevel())) {
+            user.setLevel(Level.BRONZE);
+        }
         userDao.add(user);
     }
 
@@ -30,6 +33,26 @@ public class UserServiceImpl implements UserService {
                 upgradeLevel(user);
             }
         }
+    }
+
+    @Override
+    public void update(User user) {
+        userDao.update(user);
+    }
+
+    @Override
+    public List<User> findAll() {
+        return userDao.findAll();
+    }
+
+    @Override
+    public User findById(String id) {
+        return userDao.findById(id);
+    }
+
+    @Override
+    public void deleteAll() {
+        userDao.deleteAll();
     }
 
     protected void upgradeLevel(User user) {

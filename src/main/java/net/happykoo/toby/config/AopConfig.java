@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.interceptor.RuleBasedTransactionAttribute;
 import org.springframework.transaction.interceptor.TransactionInterceptor;
 
 import javax.sql.DataSource;
@@ -28,8 +29,7 @@ public class AopConfig {
 
         Properties txAttributes = new Properties();
 
-        txAttributes.put("get*", "PROPAGATION_REQUIRED,readOnly,timeout_30");
-        txAttributes.put("upgrade*", "PROPAGATION_REQUIRES_NEW,ISOLATION_SERIALIZABLE");
+        txAttributes.put("find*", "PROPAGATION_REQUIRED,readOnly");
         txAttributes.put("*", "PROPAGATION_REQUIRED");
 
         txAdvice.setTransactionManager(transactionManager);
@@ -41,7 +41,7 @@ public class AopConfig {
     @Bean
     public Pointcut transactionPointcut() {
         AspectJExpressionPointcut pointcut = new AspectJExpressionPointcut();
-        pointcut.setExpression("execution(* *..*ServiceImpl.upgrade*(..))");
+        pointcut.setExpression("bean(*Service)");
 
         return pointcut;
     }

@@ -6,6 +6,8 @@ import net.happykoo.toby.dao.UserDao;
 import net.happykoo.toby.dto.User;
 import org.springframework.dao.DataAccessResourceFailureException;
 
+import java.util.List;
+
 @Setter
 @Getter
 public class TestUserService extends UserServiceImpl {
@@ -19,6 +21,15 @@ public class TestUserService extends UserServiceImpl {
             throw new DataAccessResourceFailureException("Network error");
         }
         super.upgradeLevel(user);
+    }
+
+    @Override
+    public List<User> findAll() {
+        List<User> users = super.findAll();
+        for(User user : users) {
+            super.update(user);
+        }
+        return users;
     }
 }
 

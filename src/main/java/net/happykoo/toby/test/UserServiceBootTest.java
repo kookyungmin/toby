@@ -11,6 +11,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.TransientDataAccessResourceException;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.List;
@@ -19,6 +20,7 @@ import static net.happykoo.toby.constant.Level.BRONZE;
 import static net.happykoo.toby.service.UserServiceImpl.MIN_LOGIN_COUNT_FOR_SILVER;
 import static net.happykoo.toby.service.UserServiceImpl.MIN_RECOMMEND_FOR_GOLD;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest(classes = ApplicationConfig.class)
 @Slf4j
@@ -28,14 +30,11 @@ public class UserServiceBootTest {
     @Autowired
     private UserService testUserService;
 
-    @Autowired
-    private UserDao userDao;
-
     private List<User> testUsers;
 
     @BeforeEach
     public void setup() {
-        userDao.deleteAll();
+        userService.deleteAll();
         testUsers = List.of(
             new User("test1", "테스트1", BRONZE, MIN_LOGIN_COUNT_FOR_SILVER - 1, 0),
             new User("test2", "테스트2", BRONZE, MIN_LOGIN_COUNT_FOR_SILVER, 0),
@@ -56,15 +55,15 @@ public class UserServiceBootTest {
         userService.add(testUserWithoutLevel);
         userService.add(testUserWithLevel);
 
-        assertEquals(BRONZE, userDao.findById(testUserWithoutLevel.getId()).getLevel());
-        assertEquals(testUserWithLevel.getLevel(), userDao.findById(testUserWithLevel.getId()).getLevel());
+        assertEquals(BRONZE, userService.findById(testUserWithoutLevel.getId()).getLevel());
+        assertEquals(testUserWithLevel.getLevel(), userService.findById(testUserWithLevel.getId()).getLevel());
     }
 
     @Test
     @DisplayName("upgradeLevels 메서드 테스트 :: 정상적인 경우")
     public void upgradeLevelsTest() {
         for(User testUser : testUsers) {
-            userDao.add(testUser);
+            userService.add(testUser);
         }
         userService.upgradeLevels();
 
@@ -80,7 +79,7 @@ public class UserServiceBootTest {
     @DirtiesContext
     public void upgradeLevelsRollbackTest() {
         for(User testUser : testUsers) {
-            userDao.add(testUser);
+            userService.add(testUser);
         }
 
         try {
@@ -94,8 +93,17 @@ public class UserServiceBootTest {
         checkUpgradeLevel(testUsers.get(4), false);
     }
 
+    @Test
+    @DisplayName("findAll 메서드 테스트 :: 트랜잭션 속성 readOnly를 위반한 경우")
+    public void findAllExceptionTest() {
+        for(User testUser : testUsers) {
+            testUserService.add(testUser);
+        }
+        assertThrows(TransientDataAccessResourceException.class, () -> testUserService.findAll());
+    }
+
     private void checkUpgradeLevel(User testUser, boolean isUpgrade) {
-        User reloadUser = userDao.findById(testUser.getId());
+        User reloadUser = userService.findById(testUser.getId());
         if (isUpgrade) {
             assertEquals(testUser.getLevel().getNextLevel(), reloadUser.getLevel());
         } else {
