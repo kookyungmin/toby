@@ -7,7 +7,6 @@ import net.happykoo.toby.service.UserService;
 import net.happykoo.toby.service.UserServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Import;
 
 import javax.sql.DataSource;
