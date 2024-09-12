@@ -13,14 +13,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.TransientDataAccessResourceException;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import java.util.List;
 
 import static net.happykoo.toby.constant.Level.BRONZE;
 import static net.happykoo.toby.service.UserServiceImpl.MIN_LOGIN_COUNT_FOR_SILVER;
 import static net.happykoo.toby.service.UserServiceImpl.MIN_RECOMMEND_FOR_GOLD;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(classes = ApplicationConfig.class)
 @Slf4j
@@ -29,6 +32,9 @@ public class UserServiceBootTest {
     private UserService userService;
     @Autowired
     private UserService testUserService;
+
+    @Autowired
+    private PlatformTransactionManager transactionManager;
 
     private List<User> testUsers;
 
@@ -62,16 +68,23 @@ public class UserServiceBootTest {
     @Test
     @DisplayName("upgradeLevels 메서드 테스트 :: 정상적인 경우")
     public void upgradeLevelsTest() {
-        for(User testUser : testUsers) {
-            userService.add(testUser);
-        }
-        userService.upgradeLevels();
+        TransactionDefinition txDefinition = new DefaultTransactionDefinition();
+        TransactionStatus txStatus = transactionManager.getTransaction(txDefinition);
 
-        checkUpgradeLevel(testUsers.get(0), false);
-        checkUpgradeLevel(testUsers.get(1), true);
-        checkUpgradeLevel(testUsers.get(2), false);
-        checkUpgradeLevel(testUsers.get(3), true);
-        checkUpgradeLevel(testUsers.get(4), false);
+        try {
+            for(User testUser : testUsers) {
+                userService.add(testUser);
+            }
+            userService.upgradeLevels();
+
+            checkUpgradeLevel(testUsers.get(0), false);
+            checkUpgradeLevel(testUsers.get(1), true);
+            checkUpgradeLevel(testUsers.get(2), false);
+            checkUpgradeLevel(testUsers.get(3), true);
+            checkUpgradeLevel(testUsers.get(4), false);
+        } finally {
+            transactionManager.rollback(txStatus);
+        }
     }
 
     @Test
@@ -100,6 +113,26 @@ public class UserServiceBootTest {
             testUserService.add(testUser);
         }
         assertThrows(TransientDataAccessResourceException.class, () -> testUserService.findAll());
+    }
+
+    @Test
+    @DisplayName("트랜잭션 전파 테스트 :: readOnly 트랜잭션에 참여한 경우")
+    public void transactionPropagationTest() {
+        DefaultTransactionDefinition txDefinition = new DefaultTransactionDefinition();
+        txDefinition.setReadOnly(true);
+        TransactionStatus txStatus = transactionManager.getTransaction(txDefinition);
+
+        try {
+            userService.deleteAll();
+
+            userService.add(testUsers.get(0));
+            userService.add(testUsers.get(1));
+
+            transactionManager.commit(txStatus);
+        } catch (Exception e) {
+            assertTrue(e instanceof TransientDataAccessResourceException);
+            transactionManager.rollback(txStatus);
+        }
     }
 
     private void checkUpgradeLevel(User testUser, boolean isUpgrade) {
