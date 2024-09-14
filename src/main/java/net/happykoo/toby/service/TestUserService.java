@@ -5,6 +5,8 @@ import lombok.Setter;
 import net.happykoo.toby.dao.UserDao;
 import net.happykoo.toby.dto.User;
 import org.springframework.dao.DataAccessResourceFailureException;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -21,15 +23,6 @@ public class TestUserService extends UserServiceImpl {
             throw new DataAccessResourceFailureException("Network error");
         }
         super.upgradeLevel(user);
-    }
-
-    @Override
-    public List<User> findAll() {
-        List<User> users = super.findAll();
-        for(User user : users) {
-            super.update(user);
-        }
-        return users;
     }
 }
 
