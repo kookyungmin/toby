@@ -14,6 +14,9 @@ import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 import javax.sql.DataSource;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
@@ -78,7 +81,7 @@ public class UserServiceDoubleTest {
         final String testId = "happykoo";
 
         //실제 객체 생성
-        UserDao userDao = new UserDaoJdbc(getDataSource());
+        UserDao userDao = new UserDaoJdbc(getDataSource(), getSqlMap());
         //Spy 객체
         UserDao userDaoSpy = spy(userDao);
 
@@ -97,5 +100,9 @@ public class UserServiceDoubleTest {
 
     private DataSource getDataSource() {
         return new SimpleDriverDataSource();
+    }
+
+    private Map<String, String> getSqlMap() {
+        return new HashMap<>();
     }
 }

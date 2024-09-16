@@ -7,25 +7,29 @@ import org.springframework.jdbc.core.RowMapper;
 
 import javax.sql.DataSource;
 import java.util.List;
+import java.util.Map;
 
 public class UserDaoJdbc implements UserDao {
     private JdbcTemplate jdbcTemplate;
+    private Map<String, String> sqlMap;
 
-    public UserDaoJdbc(DataSource dataSource) {
+    public UserDaoJdbc(DataSource dataSource,
+                       Map<String, String> sqlMap) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
+        this.sqlMap = sqlMap;
     }
 
     //전체 User 조회
     @Override
     public List<User> findAll() {
-        return this.jdbcTemplate.query("select id, nick_name, level, login_count, recommend_count from User where 1 = 1"
+        return this.jdbcTemplate.query(sqlMap.get("findAll")
                 , getUserRowMapper());
     }
 
     //ID 로 User 조회
     @Override
     public User findById(String id) {
-        return this.jdbcTemplate.queryForObject("select id, nick_name, level, login_count, recommend_count  from User where id = ?"
+        return this.jdbcTemplate.queryForObject(sqlMap.get("findById")
                 , new Object[] { id }
                 , getUserRowMapper());
     }
@@ -33,7 +37,7 @@ public class UserDaoJdbc implements UserDao {
     //User 삽입
     @Override
     public void add(User user) {
-        this.jdbcTemplate.update("insert into User(id, nick_name, level, login_count, recommend_count) values(?, ?, ?, ?, ?)"
+        this.jdbcTemplate.update(sqlMap.get("add")
                 , user.getId()
                 , user.getNickName()
                 , user.getLevel().getIntValue()
@@ -44,7 +48,7 @@ public class UserDaoJdbc implements UserDao {
     //User 정보 수정
     @Override
     public void update(User user) {
-        this.jdbcTemplate.update("update User set nick_name = ?, level = ?, login_count = ?, recommend_count = ? where id = ?"
+        this.jdbcTemplate.update(sqlMap.get("update")
                 , user.getNickName()
                 , user.getLevel().getIntValue()
                 , user.getLoginCount()
@@ -55,13 +59,13 @@ public class UserDaoJdbc implements UserDao {
     //ID 로 유저 삭제
     @Override
     public void deleteById(String id) {
-        this.jdbcTemplate.update("delete from User where id = ?", id);
+        this.jdbcTemplate.update(sqlMap.get("deleteById"), id);
     }
 
     //전체 유저 삭제
     @Override
     public void deleteAll() {
-        this.jdbcTemplate.update("delete from User where 1 = 1");
+        this.jdbcTemplate.update(sqlMap.get("deleteAll"));
     }
 
     private RowMapper<User> getUserRowMapper() {
