@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sqlmap xmlns="http://www.happykoo.net/sqlmap"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.happykoo.net/sqlmap http://www.happykoo.net/sqlmap/sqlmap.xsd">
+    <sql key="user.findAll">
+        select id, nick_name, level, login_count, recommend_count from User where 1 = 1
+    </sql>
+    <sql key="user.findById">
+        select id, nick_name, level, login_count, recommend_count  from User where id = ?
+    </sql>
+    <sql key="user.add">
+        insert into User(id, nick_name, level, login_count, recommend_count) values(?, ?, ?, ?, ?)
+    </sql>
+    <sql key="user.update">
+        update User set nick_name = ?, level = ?, login_count = ?, recommend_count = ? where id = ?
+    </sql>
+    <sql key="user.deleteById">
+        delete from User where id = ?
+    </sql>
+    <sql key="user.deleteAll">
+        delete from User where 1 = 1
+    </sql>
+</sqlmap>
