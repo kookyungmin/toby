@@ -2,6 +2,7 @@ package net.happykoo.toby.dao;
 
 import net.happykoo.toby.constant.Level;
 import net.happykoo.toby.dto.User;
+import net.happykoo.toby.service.sql.SqlService;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
@@ -11,25 +12,25 @@ import java.util.Map;
 
 public class UserDaoJdbc implements UserDao {
     private JdbcTemplate jdbcTemplate;
-    private Map<String, String> sqlMap;
+    private SqlService sqlService;
 
     public UserDaoJdbc(DataSource dataSource,
-                       Map<String, String> sqlMap) {
+                       SqlService sqlService) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
-        this.sqlMap = sqlMap;
+        this.sqlService = sqlService;
     }
 
     //전체 User 조회
     @Override
     public List<User> findAll() {
-        return this.jdbcTemplate.query(sqlMap.get("findAll")
+        return this.jdbcTemplate.query(sqlService.getSql("user.findAll")
                 , getUserRowMapper());
     }
 
     //ID 로 User 조회
     @Override
     public User findById(String id) {
-        return this.jdbcTemplate.queryForObject(sqlMap.get("findById")
+        return this.jdbcTemplate.queryForObject(sqlService.getSql("user.findById")
                 , new Object[] { id }
                 , getUserRowMapper());
     }
@@ -37,7 +38,7 @@ public class UserDaoJdbc implements UserDao {
     //User 삽입
     @Override
     public void add(User user) {
-        this.jdbcTemplate.update(sqlMap.get("add")
+        this.jdbcTemplate.update(sqlService.getSql("user.add")
                 , user.getId()
                 , user.getNickName()
                 , user.getLevel().getIntValue()
@@ -48,7 +49,7 @@ public class UserDaoJdbc implements UserDao {
     //User 정보 수정
     @Override
     public void update(User user) {
-        this.jdbcTemplate.update(sqlMap.get("update")
+        this.jdbcTemplate.update(sqlService.getSql("user.update")
                 , user.getNickName()
                 , user.getLevel().getIntValue()
                 , user.getLoginCount()
@@ -59,13 +60,13 @@ public class UserDaoJdbc implements UserDao {
     //ID 로 유저 삭제
     @Override
     public void deleteById(String id) {
-        this.jdbcTemplate.update(sqlMap.get("deleteById"), id);
+        this.jdbcTemplate.update(sqlService.getSql("user.deleteById"), id);
     }
 
     //전체 유저 삭제
     @Override
     public void deleteAll() {
-        this.jdbcTemplate.update(sqlMap.get("deleteAll"));
+        this.jdbcTemplate.update(sqlService.getSql("user.deleteAll"));
     }
 
     private RowMapper<User> getUserRowMapper() {

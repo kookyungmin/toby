@@ -2,9 +2,11 @@ package net.happykoo.toby.config;
 
 import net.happykoo.toby.dao.UserDao;
 import net.happykoo.toby.dao.UserDaoJdbc;
-import net.happykoo.toby.service.TestUserService;
-import net.happykoo.toby.service.UserService;
-import net.happykoo.toby.service.UserServiceImpl;
+import net.happykoo.toby.service.sql.SimpleSqlService;
+import net.happykoo.toby.service.sql.SqlService;
+import net.happykoo.toby.service.user.TestUserService;
+import net.happykoo.toby.service.user.UserService;
+import net.happykoo.toby.service.user.UserServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -22,6 +24,17 @@ public class ApplicationConfig {
     private Map<String, String> sqlMap;
 
     @Bean
+    public SqlService sqlService() {
+        return new SimpleSqlService(sqlMap);
+    }
+
+    @Bean
+    public UserDao userDao(DataSource dataSource,
+                           SqlService sqlService) {
+        return new UserDaoJdbc(dataSource, sqlService);
+    }
+
+    @Bean
     public UserService userService(UserDao userDao) {
         return new UserServiceImpl(userDao);
     }
@@ -31,9 +44,4 @@ public class ApplicationConfig {
         return new TestUserService(userDao);
     }
 
-
-    @Bean
-    public UserDao userDao(DataSource dataSource) {
-        return new UserDaoJdbc(dataSource, sqlMap);
-    }
 }

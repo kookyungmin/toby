@@ -1,10 +1,10 @@
-package net.happykoo.toby.test;
+package net.happykoo.toby.test.user;
 
 import net.happykoo.toby.constant.Level;
 import net.happykoo.toby.dao.UserDao;
 import net.happykoo.toby.dto.User;
-import net.happykoo.toby.service.UserService;
-import net.happykoo.toby.service.UserServiceImpl;
+import net.happykoo.toby.service.user.UserService;
+import net.happykoo.toby.service.user.UserServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,8 +13,8 @@ import org.mockito.ArgumentCaptor;
 import java.util.List;
 
 import static net.happykoo.toby.constant.Level.*;
-import static net.happykoo.toby.service.UserServiceImpl.MIN_LOGIN_COUNT_FOR_SILVER;
-import static net.happykoo.toby.service.UserServiceImpl.MIN_RECOMMEND_FOR_GOLD;
+import static net.happykoo.toby.service.user.UserServiceImpl.MIN_LOGIN_COUNT_FOR_SILVER;
+import static net.happykoo.toby.service.user.UserServiceImpl.MIN_RECOMMEND_FOR_GOLD;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 

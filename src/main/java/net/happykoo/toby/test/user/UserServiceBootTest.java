@@ -1,10 +1,10 @@
-package net.happykoo.toby.test;
+package net.happykoo.toby.test.user;
 
 import lombok.extern.slf4j.Slf4j;
 import net.happykoo.toby.config.ApplicationConfig;
 import net.happykoo.toby.constant.Level;
 import net.happykoo.toby.dto.User;
-import net.happykoo.toby.service.UserService;
+import net.happykoo.toby.service.user.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,8 +20,8 @@ import org.springframework.transaction.support.TransactionTemplate;
 import java.util.List;
 
 import static net.happykoo.toby.constant.Level.BRONZE;
-import static net.happykoo.toby.service.UserServiceImpl.MIN_LOGIN_COUNT_FOR_SILVER;
-import static net.happykoo.toby.service.UserServiceImpl.MIN_RECOMMEND_FOR_GOLD;
+import static net.happykoo.toby.service.user.UserServiceImpl.MIN_LOGIN_COUNT_FOR_SILVER;
+import static net.happykoo.toby.service.user.UserServiceImpl.MIN_RECOMMEND_FOR_GOLD;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 

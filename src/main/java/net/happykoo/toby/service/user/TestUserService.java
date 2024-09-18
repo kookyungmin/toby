@@ -1,14 +1,10 @@
-package net.happykoo.toby.service;
+package net.happykoo.toby.service.user;
 
 import lombok.Getter;
 import lombok.Setter;
 import net.happykoo.toby.dao.UserDao;
 import net.happykoo.toby.dto.User;
 import org.springframework.dao.DataAccessResourceFailureException;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Setter
 @Getter

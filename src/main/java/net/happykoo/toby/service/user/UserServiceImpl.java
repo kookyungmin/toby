@@ -1,4 +1,4 @@
-package net.happykoo.toby.service;
+package net.happykoo.toby.service.user;
 
 import net.happykoo.toby.constant.Level;
 import net.happykoo.toby.dao.UserDao;

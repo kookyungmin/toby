@@ -1,4 +1,4 @@
-package net.happykoo.toby.service;
+package net.happykoo.toby.service.user;
 
 import net.happykoo.toby.dto.User;
 import org.springframework.transaction.PlatformTransactionManager;

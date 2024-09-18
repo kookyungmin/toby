@@ -1,4 +1,4 @@
-package net.happykoo.toby.test;
+package net.happykoo.toby.test.user;
 
 import net.happykoo.toby.config.ApplicationConfig;
 import net.happykoo.toby.constant.Level;

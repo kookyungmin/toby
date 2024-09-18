@@ -1,11 +1,13 @@
-package net.happykoo.toby.test;
+package net.happykoo.toby.test.user;
 
 import net.happykoo.toby.constant.Level;
 import net.happykoo.toby.dao.UserDao;
 import net.happykoo.toby.dao.UserDaoJdbc;
 import net.happykoo.toby.dto.User;
-import net.happykoo.toby.service.UserService;
-import net.happykoo.toby.service.UserServiceImpl;
+import net.happykoo.toby.service.sql.SimpleSqlService;
+import net.happykoo.toby.service.sql.SqlService;
+import net.happykoo.toby.service.user.UserService;
+import net.happykoo.toby.service.user.UserServiceImpl;
 import net.happykoo.toby.test.test_double.UserDaoFake;
 import net.happykoo.toby.test.test_double.UserDaoStub;
 import org.junit.jupiter.api.DisplayName;
@@ -81,7 +83,7 @@ public class UserServiceDoubleTest {
         final String testId = "happykoo";
 
         //실제 객체 생성
-        UserDao userDao = new UserDaoJdbc(getDataSource(), getSqlMap());
+        UserDao userDao = new UserDaoJdbc(getDataSource(), getSqlService());
         //Spy 객체
         UserDao userDaoSpy = spy(userDao);
 
@@ -100,6 +102,10 @@ public class UserServiceDoubleTest {
 
     private DataSource getDataSource() {
         return new SimpleDriverDataSource();
+    }
+
+    private SqlService getSqlService() {
+        return new SimpleSqlService(getSqlMap());
     }
 
     private Map<String, String> getSqlMap() {
