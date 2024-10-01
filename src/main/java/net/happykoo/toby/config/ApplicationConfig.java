@@ -4,6 +4,7 @@ import net.happykoo.toby.dao.UserDao;
 import net.happykoo.toby.dao.UserDaoJdbc;
 import net.happykoo.toby.service.sql.SimpleSqlService;
 import net.happykoo.toby.service.sql.SqlService;
+import net.happykoo.toby.service.sql.XmlSqlService;
 import net.happykoo.toby.service.user.TestUserService;
 import net.happykoo.toby.service.user.UserService;
 import net.happykoo.toby.service.user.UserServiceImpl;
@@ -18,14 +19,11 @@ import java.util.Map;
 
 @Configuration
 @Import({ DataSourceConfig.class, AopConfig.class })
-@ImportResource("classpath:/sql/sql-mapper.xml")
 public class ApplicationConfig {
-    @Resource(name = "sqlMap")
-    private Map<String, String> sqlMap;
 
     @Bean
     public SqlService sqlService() {
-        return new SimpleSqlService(sqlMap);
+        return new XmlSqlService("/sql/sql-mapper.xml");
     }
 
     @Bean
