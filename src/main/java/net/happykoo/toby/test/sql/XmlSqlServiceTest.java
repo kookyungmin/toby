@@ -3,6 +3,7 @@ package net.happykoo.toby.test.sql;
 
 import lombok.extern.slf4j.Slf4j;
 import net.happykoo.toby.service.sql.SqlRetrievalFailureException;
+import net.happykoo.toby.service.sql.BaseSqlService;
 import net.happykoo.toby.service.sql.XmlSqlService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
