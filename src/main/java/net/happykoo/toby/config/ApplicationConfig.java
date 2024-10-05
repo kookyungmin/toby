@@ -6,7 +6,8 @@ import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.Import;
 
 @Configuration
-@Import({ DataSourceConfig.class, AopConfig.class, SqlServiceConfig.class })
+@EnableSqlService(value = "classpath:sql/sql-mapper.xml")
+@Import({ DataSourceConfig.class, AopConfig.class })
 @ComponentScan(basePackages = "net.happykoo.toby",
-        excludeFilters = @ComponentScan.Filter(type = FilterType.REGEX, pattern = "net.happykoo.toby.config.*"))
+    excludeFilters = @ComponentScan.Filter(type = FilterType.REGEX, pattern = "net.happykoo.toby.config.*"))
 public class ApplicationConfig {}

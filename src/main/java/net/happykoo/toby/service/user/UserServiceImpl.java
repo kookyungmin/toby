@@ -1,17 +1,11 @@
 package net.happykoo.toby.service.user;
 
 import lombok.RequiredArgsConstructor;
-import net.happykoo.toby.config.ApplicationConfig;
 import net.happykoo.toby.constant.Level;
 import net.happykoo.toby.dao.UserDao;
 import net.happykoo.toby.dto.User;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Profile;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.List;
 import java.util.Objects;
 
