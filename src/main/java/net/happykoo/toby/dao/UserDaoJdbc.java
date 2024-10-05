@@ -5,14 +5,16 @@ import net.happykoo.toby.dto.User;
 import net.happykoo.toby.service.sql.SqlService;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.util.List;
-import java.util.Map;
 
+@Repository("userDao")
 public class UserDaoJdbc implements UserDao {
-    private JdbcTemplate jdbcTemplate;
-    private SqlService sqlService;
+    private final JdbcTemplate jdbcTemplate;
+    private final SqlService sqlService;
 
     public UserDaoJdbc(DataSource dataSource,
                        SqlService sqlService) {

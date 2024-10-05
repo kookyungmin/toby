@@ -5,9 +5,12 @@ import lombok.Setter;
 import net.happykoo.toby.dao.UserDao;
 import net.happykoo.toby.dto.User;
 import org.springframework.dao.DataAccessResourceFailureException;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 @Setter
 @Getter
+@Service("testUserService")
 public class TestUserService extends UserServiceImpl {
     public TestUserService(UserDao userDao) {
         super(userDao);

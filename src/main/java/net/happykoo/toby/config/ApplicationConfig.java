@@ -1,50 +1,12 @@
 package net.happykoo.toby.config;
 
-import net.happykoo.toby.dao.UserDao;
-import net.happykoo.toby.dao.UserDaoJdbc;
-import net.happykoo.toby.service.sql.*;
-import net.happykoo.toby.service.user.TestUserService;
-import net.happykoo.toby.service.user.UserService;
-import net.happykoo.toby.service.user.UserServiceImpl;
-import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.Import;
 
-import javax.sql.DataSource;
-
 @Configuration
-@Import({ DataSourceConfig.class, AopConfig.class })
-public class ApplicationConfig {
-    @Bean
-    public SqlRegistry sqlRegistry() {
-        return new HashMapSqlRegistry();
-    }
-
-    @Bean
-    public SqlLoader sqlLoader() {
-        return new JaxbSqlLoader("/sql/sql-mapper.xml");
-    }
-
-    @Bean
-    public SqlService sqlService(SqlLoader sqlLoader,
-                                 SqlRegistry sqlRegistry) {
-        return new BaseSqlService(sqlLoader, sqlRegistry);
-    }
-
-    @Bean
-    public UserDao userDao(DataSource dataSource,
-                           SqlService sqlService) {
-        return new UserDaoJdbc(dataSource, sqlService);
-    }
-
-    @Bean
-    public UserService userService(UserDao userDao) {
-        return new UserServiceImpl(userDao);
-    }
-
-    @Bean
-    public UserService testUserService(UserDao userDao) {
-        return new TestUserService(userDao);
-    }
-
-}
+@Import({ DataSourceConfig.class, AopConfig.class, SqlServiceConfig.class })
+@ComponentScan(basePackages = "net.happykoo.toby",
+        excludeFilters = @ComponentScan.Filter(type = FilterType.REGEX, pattern = "net.happykoo.toby.config.*"))
+public class ApplicationConfig {}

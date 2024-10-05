@@ -1,21 +1,27 @@
 package net.happykoo.toby.service.user;
 
+import lombok.RequiredArgsConstructor;
+import net.happykoo.toby.config.ApplicationConfig;
 import net.happykoo.toby.constant.Level;
 import net.happykoo.toby.dao.UserDao;
 import net.happykoo.toby.dto.User;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.List;
 import java.util.Objects;
 
+@Service("userService")
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     public static final int MIN_LOGIN_COUNT_FOR_SILVER = 50;
     public static final int MIN_RECOMMEND_FOR_GOLD = 30;
 
-    private UserDao userDao;
-
-    public UserServiceImpl(UserDao userDao) {
-        this.userDao = userDao;
-    }
+    private final UserDao userDao;
 
     @Override
     public void add(User user) {
